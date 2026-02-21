@@ -1,0 +1,5 @@
+{
+  "name": "EastWest Truck & Trailer Parts",
+  "description": "Premium commercial vehicle spare parts in South Africa. Quality truck and trailer components for leading brands.",
+  "requestFramePermissions": ["geolocation"]
+}
