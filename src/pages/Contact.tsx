@@ -6,9 +6,9 @@ export default function Contact() {
   return (
     <div className="pt-32 pb-24 px-6">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-16">
-          <h1 className="text-4xl md:text-5xl mb-4">Contact Us</h1>
-          <p className="text-white/50 max-w-2xl">
+        <header className="mb-16 text-center md:text-left">
+          <h1 className="text-4xl md:text-6xl mb-4 font-black tracking-tighter">Contact Us</h1>
+          <p className="text-white/50 max-w-2xl mx-auto md:mx-0 text-lg">
             Have questions about a specific part or need technical advice? Reach out to our expert team in Kempton Park.
           </p>
         </header>
@@ -90,7 +90,7 @@ export default function Contact() {
           </div>
 
           {/* Map Placeholder */}
-          <div className="glass-card overflow-hidden h-full min-h-[500px] relative">
+          <div className="glass-card overflow-hidden h-[400px] lg:h-full relative order-first lg:order-last">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3583.585157140417!2d28.275143!3d-26.079234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e951475c8799999%3A0x0!2zMjbCsDA0JzQ1LjIiUyAyOMKwMTYnMzAuNSJF!5e0!3m2!1sen!2sza!4v1700000000000!5m2!1sen!2sza"
               width="100%"

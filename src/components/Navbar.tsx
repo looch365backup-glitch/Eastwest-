@@ -68,37 +68,56 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X /> : <Menu />}
+        <button 
+          className="md:hidden text-white p-2 -mr-2 hover:bg-white/5 rounded-lg transition-colors" 
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle Menu"
+        >
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-steel border-t border-white/10 p-6 md:hidden flex flex-col gap-4 shadow-2xl"
-          >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={cn(
-                  'text-lg font-medium transition-colors',
-                  location.pathname === link.path ? 'text-accent' : 'text-white/70'
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Link to="/quote" onClick={() => setIsOpen(false)} className="btn-primary w-full">
-              Request a Quote
-            </Link>
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-charcoal/60 backdrop-blur-sm z-[-1] md:hidden"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute top-full left-0 right-0 bg-steel border-t border-white/10 p-6 md:hidden flex flex-col gap-4 shadow-2xl rounded-b-2xl"
+            >
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'text-lg font-bold py-2 transition-colors flex items-center justify-between group',
+                    location.pathname === link.path ? 'text-accent' : 'text-white/70'
+                  )}
+                >
+                  {link.name}
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full bg-accent opacity-0 transition-opacity",
+                    location.pathname === link.path && "opacity-100"
+                  )} />
+                </Link>
+              ))}
+              <div className="pt-4 mt-2 border-t border-white/5">
+                <Link to="/quote" onClick={() => setIsOpen(false)} className="btn-primary w-full py-4 text-base">
+                  Request a Quote
+                </Link>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>

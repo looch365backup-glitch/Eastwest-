@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, CheckCircle, Upload, Info } from 'lucide-react';
+import { Send, CheckCircle, Upload, Info, Download, Loader2, Truck } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function Quote() {
   const location = useLocation();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     company: '',
     contactPerson: '',
@@ -29,6 +33,43 @@ export default function Quote() {
     e.preventDefault();
     // Simulate API call
     setTimeout(() => setIsSubmitted(true), 1000);
+  };
+
+  const handleDownload = async () => {
+    if (!summaryRef.current) return;
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(summaryRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        onclone: (clonedDoc) => {
+          const area = clonedDoc.getElementById('summary-capture-area');
+          if (area) {
+            area.style.backgroundColor = '#ffffff';
+            area.style.color = '#111111';
+            area.querySelectorAll('*').forEach((node) => {
+              const element = node as HTMLElement;
+              if (element.style.color.includes('oklab')) {
+                element.style.color = '#111111';
+              }
+            });
+          }
+        }
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`EastWest-Quote-Request-${Date.now()}.pdf`);
+    } catch (error) {
+      console.error('PDF Error:', error);
+      alert('Failed to generate PDF summary.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -187,7 +228,7 @@ export default function Quote() {
               key="success"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="glass-card p-16 text-center"
+              className="glass-card p-8 md:p-16 text-center"
             >
               <div className="bg-emerald-500/20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8">
                 <CheckCircle size={48} className="text-emerald-500" />
@@ -196,12 +237,76 @@ export default function Quote() {
               <p className="text-white/50 text-lg mb-10 max-w-md mx-auto">
                 Thank you for choosing EastWest. Our sales team will contact you at <span className="text-white font-bold">{formData.email}</span> within 24 hours.
               </p>
-              <button 
-                onClick={() => setIsSubmitted(false)}
-                className="btn-secondary px-10"
-              >
-                Back to Products
-              </button>
+
+              {/* Hidden Summary for PDF */}
+              <div className="hidden">
+                <div 
+                  ref={summaryRef} 
+                  id="summary-capture-area"
+                  style={{ backgroundColor: '#ffffff', color: '#111111' }}
+                  className="p-12 w-[800px]"
+                >
+                  <div className="flex justify-between items-start mb-12 border-b border-charcoal/10 pb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-[#1B365D] p-3 rounded-xl">
+                        <Truck className="text-[#F9D71C] w-8 h-8" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-black tracking-tighter leading-none">EASTWEST</h2>
+                        <p className="text-[10px] text-[#1B365D] font-bold tracking-[0.2em] uppercase">Truck & Trailer Parts</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <h1 className="text-3xl font-black text-[#1B365D] uppercase mb-2">Quote Request</h1>
+                      <p className="text-sm text-charcoal/50">{new Date().toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-8">
+                      <div>
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-charcoal/40 mb-2">Customer Details</h4>
+                        <p className="font-bold">{formData.contactPerson}</p>
+                        <p className="text-sm">{formData.company}</p>
+                        <p className="text-sm">{formData.email}</p>
+                        <p className="text-sm">{formData.phone}</p>
+                      </div>
+                      <div className="text-right">
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-charcoal/40 mb-2">Part Requested</h4>
+                        <p className="font-bold">{formData.partName}</p>
+                        <p className="text-sm">Brand: {formData.brand || 'Not specified'}</p>
+                        <p className="text-sm">Quantity: {formData.quantity}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-8 border-t border-charcoal/10">
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-charcoal/40 mb-2">Additional Notes</h4>
+                      <p className="text-sm leading-relaxed">{formData.message || 'No additional notes provided.'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-20 pt-8 border-t border-charcoal/10 text-center">
+                    <p className="text-[10px] text-charcoal/40">EastWest Truck & Trailer Parts • 121 High Road, Pomona, Kempton Park • 011 524 6095</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="btn-primary px-10 flex items-center gap-2"
+                >
+                  {isDownloading ? <Loader2 className="animate-spin" size={20} /> : <Download size={20} />}
+                  Download Summary
+                </button>
+                <button 
+                  onClick={() => setIsSubmitted(false)}
+                  className="btn-secondary px-10"
+                >
+                  Back to Form
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

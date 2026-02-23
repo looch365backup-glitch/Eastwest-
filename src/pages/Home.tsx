@@ -59,10 +59,10 @@ export default function Home() {
             <span className="inline-block bg-accent/20 text-accent px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
               Premium Truck & Trailer Parts
             </span>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] mb-6 tracking-tight">
               Powering South Africa's <span className="text-accent">Trucks & Trailers</span> with Quality Parts
             </h1>
-            <p className="text-xl text-white/60 mb-10 leading-relaxed">
+            <p className="text-lg md:text-xl text-white/60 mb-10 leading-relaxed max-w-xl">
               Premium spare parts for leading truck and trailer brands. We provide the reliability you need for the long haul.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -110,13 +110,13 @@ export default function Home() {
       {/* Featured Products */}
       <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
             <div>
               <h2 className="text-3xl md:text-4xl mb-4">Featured Products</h2>
               <p className="text-white/50">Our most popular high-performance components.</p>
             </div>
-            <Link to="/products" className="text-accent font-bold flex items-center gap-2 hover:gap-3 transition-all">
-              View All Products <ArrowRight size={18} />
+            <Link to="/products" className="text-accent font-bold flex items-center gap-2 hover:gap-3 transition-all group">
+              View All Products <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
@@ -179,15 +179,15 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-24 px-6">
-        <div className="max-w-5xl mx-auto glass-card p-12 md:p-20 text-center relative overflow-hidden">
+        <div className="max-w-5xl mx-auto glass-card p-8 md:p-20 text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-accent" />
-          <h2 className="text-3xl md:text-5xl mb-6">Ready to Get Your Fleet Back on the Road?</h2>
-          <p className="text-white/60 text-lg mb-10 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-5xl mb-6 font-black tracking-tighter">Ready to Get Your Fleet Back on the Road?</h2>
+          <p className="text-white/60 text-base md:text-lg mb-10 max-w-2xl mx-auto">
             Contact our expert sales team today for a custom quote or stock availability check.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link to="/quote" className="btn-primary text-lg px-10">Request a Quote</Link>
-            <Link to="/contact" className="btn-secondary text-lg px-10">Contact Us</Link>
+            <Link to="/quote" className="btn-primary text-lg px-10 py-4">Request a Quote</Link>
+            <Link to="/contact" className="btn-secondary text-lg px-10 py-4">Contact Us</Link>
           </div>
         </div>
       </section>

@@ -1,8 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
-import { Search, Filter, SlidersHorizontal, Truck } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, Truck, X } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 import ProductCard from '../components/ProductCard';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 const CATEGORIES = [
   'All Parts',
@@ -33,6 +39,7 @@ export default function Products() {
   const [activeCategory, setActiveCategory] = useState('All Parts');
   const [activeBrand, setActiveBrand] = useState('All Brands');
   const [priceRange, setPriceRange] = useState(10000);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter(p => {
@@ -59,8 +66,22 @@ export default function Products() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden flex gap-4">
+            <button 
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="flex-grow flex items-center justify-center gap-2 bg-steel border border-white/10 rounded-xl py-4 font-bold text-accent"
+            >
+              <Filter size={20} />
+              {showMobileFilters ? 'Hide Filters' : 'Show Filters'}
+            </button>
+          </div>
+
           {/* Sidebar Filters */}
-          <aside className="space-y-10">
+          <aside className={cn(
+            "space-y-10 lg:block",
+            showMobileFilters ? "block" : "hidden"
+          )}>
             {/* Search */}
             <div className="space-y-4">
               <h3 className="font-bold flex items-center gap-2">

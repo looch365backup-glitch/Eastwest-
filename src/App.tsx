@@ -7,7 +7,6 @@ import { Truck } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
-import ChatBot from './components/ChatBot';
 
 // Pages
 import Home from './pages/Home';
@@ -101,7 +100,6 @@ export default function App() {
 
         <Footer />
         <WhatsAppButton />
-        <ChatBot />
       </div>
     </Router>
   );

@@ -60,7 +60,22 @@ export default function QuoteBuilder() {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        ignoreElements: (el) => el.classList.contains('no-print'),
+        onclone: (clonedDoc) => {
+          const area = clonedDoc.getElementById('quote-capture-area');
+          if (area) {
+            area.style.backgroundColor = '#ffffff';
+            area.style.color = '#111111';
+            // Force all text to use standard colors in the clone
+            area.querySelectorAll('*').forEach((node) => {
+              const element = node as HTMLElement;
+              if (element.style.color.includes('oklab')) {
+                element.style.color = '#111111';
+              }
+            });
+          }
+        }
       });
       
       const imgData = canvas.toDataURL('image/png');
@@ -147,8 +162,18 @@ export default function QuoteBuilder() {
                 disabled={items.length === 0}
                 className="btn-secondary w-full disabled:opacity-50"
               >
-                Generate Official Quote
+                {isGenerated ? 'Update Generated Quote' : 'Generate Official Quote'}
               </button>
+              {isGenerated && (
+                <button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="btn-primary w-full flex items-center justify-center gap-2"
+                >
+                  {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+                  Download PDF Quote
+                </button>
+              )}
             </div>
           </div>
 
@@ -165,30 +190,33 @@ export default function QuoteBuilder() {
                 >
                   {items.length > 0 ? (
                     items.map((item) => (
-                      <div key={item.product.id} className="glass-card p-4 flex items-center justify-between gap-4 group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 rounded-lg overflow-hidden">
+                      <div key={item.product.id} className="glass-card p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
+                        <div className="flex items-center gap-4 w-full sm:w-auto">
+                          <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0">
                             <img 
                               src={item.product.image} 
                               className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500" 
                               referrerPolicy="no-referrer" 
                             />
                           </div>
-                          <div>
-                            <h4 className="font-bold text-sm">{item.product.name}</h4>
+                          <div className="flex-grow">
+                            <h4 className="font-bold text-sm line-clamp-1">{item.product.name}</h4>
                             <p className="text-xs text-white/40">{item.product.brand}</p>
+                            <p className="text-xs text-accent font-bold sm:hidden mt-1">R {item.product.price.toLocaleString()}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center justify-between w-full sm:w-auto gap-6 sm:gap-6 border-t border-white/5 pt-4 sm:pt-0 sm:border-none">
                           <div className="flex items-center gap-3 bg-charcoal rounded-lg p-1 border border-white/5">
-                            <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="p-1 hover:text-accent"><Trash2 size={14} /></button>
+                            <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="p-1 hover:text-accent transition-colors">
+                              {item.quantity === 1 ? <Trash2 size={14} className="text-red-500/50" /> : <Trash2 size={14} />}
+                            </button>
                             <span className="text-sm font-bold w-6 text-center">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="p-1 hover:text-accent"><Plus size={14} /></button>
+                            <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="p-1 hover:text-accent transition-colors"><Plus size={14} /></button>
                           </div>
                           <div className="text-right min-w-[100px]">
                             <p className="text-sm font-bold">R {(item.product.price * item.quantity).toLocaleString()}</p>
                           </div>
-                          <button onClick={() => removeItem(item.product.id)} className="text-white/20 hover:text-red-500 transition-colors">
+                          <button onClick={() => removeItem(item.product.id)} className="text-white/20 hover:text-red-500 transition-colors hidden sm:block">
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -205,9 +233,11 @@ export default function QuoteBuilder() {
                 <motion.div
                   key="quote"
                   ref={quoteRef}
+                  id="quote-capture-area"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white text-charcoal p-8 md:p-12 rounded-xl shadow-2xl relative print:m-0 print:p-0 print:shadow-none"
+                  style={{ backgroundColor: '#ffffff', color: '#111111' }}
+                  className="p-8 md:p-12 rounded-xl shadow-2xl relative print:m-0 print:p-0 print:shadow-none"
                 >
                   {/* Quote Header */}
                   <div className="flex justify-between items-start mb-12 border-b border-charcoal/10 pb-8">
@@ -244,29 +274,31 @@ export default function QuoteBuilder() {
                   </div>
 
                   {/* Table */}
-                  <table className="w-full mb-12">
-                    <thead>
-                      <tr className="border-b-2 border-charcoal/10 text-left text-[10px] font-bold uppercase tracking-widest">
-                        <th className="py-4">Description</th>
-                        <th className="py-4 text-center">Qty</th>
-                        <th className="py-4 text-right">Unit Price</th>
-                        <th className="py-4 text-right">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                      {items.map((item) => (
-                        <tr key={item.product.id} className="border-b border-charcoal/5">
-                          <td className="py-4">
-                            <p className="font-bold">{item.product.name}</p>
-                            <p className="text-xs text-charcoal/40">{item.product.brand} - {item.product.subCategory}</p>
-                          </td>
-                          <td className="py-4 text-center">{item.quantity}</td>
-                          <td className="py-4 text-right">R {item.product.price.toLocaleString()}</td>
-                          <td className="py-4 text-right font-bold">R {(item.product.price * item.quantity).toLocaleString()}</td>
+                  <div className="overflow-x-auto -mx-8 md:mx-0 mb-12">
+                    <table className="w-full min-w-[600px]">
+                      <thead>
+                        <tr className="border-b-2 border-charcoal/10 text-left text-[10px] font-bold uppercase tracking-widest">
+                          <th className="py-4 px-8 md:px-0">Description</th>
+                          <th className="py-4 text-center">Qty</th>
+                          <th className="py-4 text-right">Unit Price</th>
+                          <th className="py-4 text-right px-8 md:px-0">Amount</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="text-sm">
+                        {items.map((item) => (
+                          <tr key={item.product.id} className="border-b border-charcoal/5">
+                            <td className="py-4 px-8 md:px-0">
+                              <p className="font-bold">{item.product.name}</p>
+                              <p className="text-xs text-charcoal/40">{item.product.brand} - {item.product.subCategory}</p>
+                            </td>
+                            <td className="py-4 text-center">{item.quantity}</td>
+                            <td className="py-4 text-right">R {item.product.price.toLocaleString()}</td>
+                            <td className="py-4 text-right font-bold px-8 md:px-0">R {(item.product.price * item.quantity).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
                   {/* Totals */}
                   <div className="flex justify-end mb-12">
