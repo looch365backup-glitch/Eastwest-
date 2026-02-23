@@ -165,9 +165,15 @@ export default function QuoteBuilder() {
                 >
                   {items.length > 0 ? (
                     items.map((item) => (
-                      <div key={item.product.id} className="glass-card p-4 flex items-center justify-between gap-4">
+                      <div key={item.product.id} className="glass-card p-4 flex items-center justify-between gap-4 group">
                         <div className="flex items-center gap-4">
-                          <img src={item.product.image} className="w-16 h-16 rounded-lg object-cover" referrerPolicy="no-referrer" />
+                          <div className="w-16 h-16 rounded-lg overflow-hidden">
+                            <img 
+                              src={item.product.image} 
+                              className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500" 
+                              referrerPolicy="no-referrer" 
+                            />
+                          </div>
                           <div>
                             <h4 className="font-bold text-sm">{item.product.name}</h4>
                             <p className="text-xs text-white/40">{item.product.brand}</p>

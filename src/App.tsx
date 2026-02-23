@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
+import { Truck } from 'lucide-react';
 
 // Components
 import Navbar from './components/Navbar';
@@ -40,6 +41,44 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial app load
+    const timer = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isInitialLoading) {
+    return (
+      <div className="fixed inset-0 bg-charcoal flex flex-col items-center justify-center z-[9999]">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="bg-accent p-4 rounded-2xl shadow-2xl shadow-accent/20 animate-bounce">
+            <Truck className="text-charcoal w-12 h-12" />
+          </div>
+          <div className="flex flex-col items-center">
+            <h2 className="text-2xl font-black tracking-tighter text-white">EASTWEST</h2>
+            <div className="w-48 h-1 bg-white/10 rounded-full mt-4 overflow-hidden">
+              <motion.div 
+                initial={{ x: '-100%' }}
+                animate={{ x: '100%' }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                className="w-full h-full bg-accent"
+              />
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <Router>
       <ScrollToTop />

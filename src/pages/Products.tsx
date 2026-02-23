@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, SlidersHorizontal } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Search, Filter, SlidersHorizontal, Truck } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 import ProductCard from '../components/ProductCard';
 
@@ -15,9 +16,22 @@ const CATEGORIES = [
   'King Pins'
 ];
 
+const BRANDS_LIST = [
+  'All Brands',
+  'Mercedes-Benz',
+  'Volvo Trucks',
+  'Scania',
+  'MAN Truck & Bus',
+  'DAF Trucks',
+  'BPW Group',
+  'SAF-Holland',
+  'Hendrickson'
+];
+
 export default function Products() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All Parts');
+  const [activeBrand, setActiveBrand] = useState('All Brands');
   const [priceRange, setPriceRange] = useState(10000);
 
   const filteredProducts = useMemo(() => {
@@ -27,11 +41,12 @@ export default function Products() {
       const matchesCategory = activeCategory === 'All Parts' || 
                              p.category === activeCategory || 
                              p.subCategory === activeCategory;
+      const matchesBrand = activeBrand === 'All Brands' || p.brand === activeBrand;
       const matchesPrice = p.price <= priceRange;
       
-      return matchesSearch && matchesCategory && matchesPrice;
+      return matchesSearch && matchesCategory && matchesBrand && matchesPrice;
     });
-  }, [search, activeCategory, priceRange]);
+  }, [search, activeCategory, activeBrand, priceRange]);
 
   return (
     <div className="pt-32 pb-24 px-6">
@@ -69,21 +84,41 @@ export default function Products() {
                 <Filter size={18} className="text-accent" />
                 Categories
               </h3>
-              <div className="flex flex-wrap lg:flex-col gap-2">
+              <div className="flex flex-wrap lg:flex-col gap-1">
                 {CATEGORIES.map(cat => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`text-left px-4 py-2 rounded-lg text-sm transition-all ${
+                    className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all relative group ${
                       activeCategory === cat 
-                        ? 'bg-accent text-white font-bold' 
-                        : 'bg-steel/50 text-white/50 hover:bg-steel hover:text-white'
+                        ? 'bg-accent text-white font-bold shadow-lg shadow-accent/20' 
+                        : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
                     }`}
                   >
                     {cat}
+                    {activeCategory === cat && (
+                      <motion.div layoutId="activeCat" className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-full" />
+                    )}
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Brands */}
+            <div className="space-y-4">
+              <h3 className="font-bold flex items-center gap-2">
+                <Truck size={18} className="text-accent" />
+                Filter by Brand
+              </h3>
+              <select
+                value={activeBrand}
+                onChange={(e) => setActiveBrand(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-sm focus:outline-none focus:border-accent transition-colors appearance-none"
+              >
+                {BRANDS_LIST.map(brand => (
+                  <option key={brand} value={brand} className="bg-charcoal">{brand}</option>
+                ))}
+              </select>
             </div>
 
             {/* Price Filter */}
@@ -140,7 +175,7 @@ export default function Products() {
                 <h3 className="text-xl mb-2">No products found</h3>
                 <p className="text-white/50">Try adjusting your filters or search terms.</p>
                 <button 
-                  onClick={() => {setSearch(''); setActiveCategory('All Parts'); setPriceRange(10000);}}
+                  onClick={() => {setSearch(''); setActiveCategory('All Parts'); setActiveBrand('All Brands'); setPriceRange(10000);}}
                   className="mt-6 text-accent font-bold hover:underline"
                 >
                   Clear all filters

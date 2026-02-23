@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EastWest Truck & Trailer Parts - Home Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #141414;
+            color: #ffffff;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(242, 125, 38, 0.3);
+        }
+        .text-accent { color: #F27D26; }
+        .bg-accent { background-color: #F27D26; }
+        .border-accent { border-color: #F27D26; }
+        .btn-primary {
+            background-color: #F27D26;
+            color: #141414;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(242, 125, 38, 0.2);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover { color: #F27D26; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-[#141414]/80 backdrop-blur-md border-b border-white/10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-accent p-2 rounded-lg">
+                    <i data-lucide="truck" class="text-[#141414] w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-tighter leading-none">EASTWEST</span>
+                    <span class="text-[10px] text-accent font-bold tracking-[0.2em] uppercase">Truck & Trailer Parts</span>
+                </div>
+            </div>
+            <div class="hidden md:flex gap-8">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="#" class="nav-link">Products</a>
+                <a href="#" class="nav-link">Brands</a>
+                <a href="#" class="nav-link">Quote Builder</a>
+                <a href="#" class="nav-link">Contact Us</a>
+            </div>
+            <button class="md:hidden text-white">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-[90vh] flex items-center px-6 overflow-hidden pt-20">
+        <div class="absolute inset-0 z-0">
+            <img
+                src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=2000"
+                alt="Truck Workshop"
+                class="w-full h-full object-cover opacity-40"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/80 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto w-full">
+            <div class="max-w-2xl">
+                <span class="inline-block bg-accent/20 text-accent px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+                    Premium Truck & Trailer Parts
+                </span>
+                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] mb-6">
+                    Powering South Africa's <span class="text-accent">Trucks & Trailers</span> with Quality Parts
+                </h1>
+                <p class="text-xl text-white/60 mb-10 leading-relaxed">
+                    Premium spare parts for leading truck and trailer brands. We provide the reliability you need for the long haul.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#" class="btn-primary text-lg px-8">
+                        View Products
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="btn-secondary text-lg px-8">
+                        Request a Quote
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="py-24 px-6 bg-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl mb-4 font-bold">Why Choose EastWest?</h2>
+                <div class="w-20 h-1 bg-accent mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                <div class="glass-card p-8 text-center group">
+                    <div class="bg-accent/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="shield-check" class="text-accent w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg mb-3 font-bold">Genuine & Aftermarket</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">High-quality parts for all major commercial brands.</p>
+                </div>
+                <div class="glass-card p-8 text-center group">
+                    <div class="bg-accent/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="zap" class="text-accent w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg mb-3 font-bold">Competitive Pricing</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Best rates in Gauteng for premium truck components.</p>
+                </div>
+                <div class="glass-card p-8 text-center group">
+                    <div class="bg-accent/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="truck" class="text-accent w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg mb-3 font-bold">Fast Turnaround</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Quick processing to keep your fleet on the road.</p>
+                </div>
+                <div class="glass-card p-8 text-center group">
+                    <div class="bg-accent/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="globe" class="text-accent w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg mb-3 font-bold">Nationwide Supply</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">We deliver across South Africa and neighboring regions.</p>
+                </div>
+                <div class="glass-card p-8 text-center group">
+                    <div class="bg-accent/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="headphones" class="text-accent w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg mb-3 font-bold">Expert Support</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Professional advice from industry specialists.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#141414] border-t border-white/10 pt-16 pb-8 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div class="space-y-6">
+                <div class="flex items-center gap-2">
+                    <div class="bg-accent p-2 rounded-lg">
+                        <i data-lucide="truck" class="text-[#141414] w-6 h-6"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold tracking-tighter leading-none">EASTWEST</span>
+                        <span class="text-[10px] text-accent font-bold tracking-[0.2em] uppercase">Truck & Trailer Parts</span>
+                    </div>
+                </div>
+                <p class="text-white/50 text-sm leading-relaxed">
+                    Powering South Africa's trucks and trailers with premium quality spare parts. Reliable service for the long haul.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6">Quick Links</h4>
+                <ul class="space-y-4 text-sm text-white/50">
+                    <li><a href="#" class="hover:text-accent transition-colors">About Us</a></li>
+                    <li><a href="#" class="hover:text-accent transition-colors">Products</a></li>
+                    <li><a href="#" class="hover:text-accent transition-colors">Brands</a></li>
+                    <li><a href="#" class="hover:text-accent transition-colors">Request a Quote</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6">Contact Us</h4>
+                <ul class="space-y-4 text-sm text-white/50">
+                    <li class="flex items-start gap-3">
+                        <i data-lucide="map-pin" class="text-accent w-5 h-5 shrink-0"></i>
+                        <span>121 High Road, Pomona, Bredell, Kempton Park, Gauteng 1619</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="phone" class="text-accent w-5 h-5 shrink-0"></i>
+                        <span>011 524 6095</span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6">Follow Us</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="text-white/50 hover:text-accent transition-colors"><i data-lucide="facebook"></i></a>
+                    <a href="#" class="text-white/50 hover:text-accent transition-colors"><i data-lucide="instagram"></i></a>
+                    <a href="#" class="text-white/50 hover:text-accent transition-colors"><i data-lucide="linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 text-center text-xs text-white/30">
+            <p>© 2026 EastWest Truck & Trailer Parts. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

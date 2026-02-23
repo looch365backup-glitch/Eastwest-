@@ -21,7 +21,7 @@ export default function Footer() {
             Powering South Africa's trucks and trailers with premium quality spare parts. Reliable service for the long haul.
           </p>
           <div className="flex gap-4">
-            <a href="#" className="text-white/50 hover:text-accent transition-colors"><Facebook size={20} /></a>
+            <a href="https://www.facebook.com/p/East-West-Truck-and-Trailer-Parts-100070069072181/" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-accent transition-colors"><Facebook size={20} /></a>
             <a href="https://www.instagram.com/eastwesttruckandtrailerparts/" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-accent transition-colors"><Instagram size={20} /></a>
             <a href="#" className="text-white/50 hover:text-accent transition-colors"><Linkedin size={20} /></a>
           </div>

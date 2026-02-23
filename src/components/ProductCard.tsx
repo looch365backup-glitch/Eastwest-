@@ -15,16 +15,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     'On Order': <AlertCircle size={14} className="text-accent" />
   };
 
+  const [mousePos, setMousePos] = React.useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setMousePos({ x, y });
+  };
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
       className="glass-card overflow-hidden group flex flex-col h-full"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div 
+        className="relative aspect-[4/3] overflow-hidden cursor-zoom-in"
+        onMouseMove={handleMouseMove}
+      >
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover transition-transform duration-500 ease-out origin-[var(--x)_var(--y)] group-hover:scale-[2]"
+          style={{ 
+            '--x': `${mousePos.x}%`, 
+            '--y': `${mousePos.y}%` 
+          } as React.CSSProperties}
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-3 left-3 bg-charcoal/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-white/70">

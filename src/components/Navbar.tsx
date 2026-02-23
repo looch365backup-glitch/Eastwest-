@@ -33,7 +33,7 @@ export default function Navbar() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4',
-        scrolled ? 'bg-charcoal/90 backdrop-blur-md border-bottom border-white/10 shadow-lg' : 'bg-transparent'
+        scrolled ? 'bg-charcoal/90 backdrop-blur-md border-b border-white/10 shadow-lg' : 'bg-transparent'
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
