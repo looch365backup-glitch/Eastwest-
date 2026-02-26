@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Trash2, FileText, Download, Printer, Truck, Calculator, Loader2 } from 'lucide-react';
+import { Plus, Trash2, FileText, Download, Printer, Truck, Calculator, Loader2, Send, CheckCircle, X } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 import { Product } from '../types';
 import jsPDF from 'jspdf';
@@ -16,6 +16,16 @@ export default function QuoteBuilder() {
   const [selectedProductId, setSelectedProductId] = useState('');
   const [isGenerated, setIsGenerated] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [contactData, setContactData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: ''
+  });
   const [quoteNumber] = useState(() => `EW-${Math.floor(10000 + Math.random() * 90000)}`);
   const [date] = useState(() => new Date().toLocaleDateString('en-ZA'));
   const quoteRef = useRef<HTMLDivElement>(null);
@@ -99,6 +109,45 @@ export default function QuoteBuilder() {
     }
   };
 
+  const handleSubmitQuote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const payload = {
+      ...contactData,
+      quoteNumber,
+      total: total.toLocaleString('en-ZA', { minimumFractionDigits: 2 }),
+      items: items.map(i => `${i.product.name} (x${i.quantity}) - R${(i.product.price * i.quantity).toLocaleString()}`).join('\n'),
+      _subject: `New Quote Submission: ${quoteNumber}`
+    };
+
+    try {
+      const response = await fetch('https://formspree.io/f/xjgelevq', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setTimeout(() => {
+          setShowSubmitModal(false);
+          setIsSubmitted(false);
+        }, 3000);
+      } else {
+        setSubmitError('Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      setSubmitError('An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="pt-32 pb-24 px-6 min-h-screen">
       <div className="max-w-5xl mx-auto">
@@ -165,14 +214,23 @@ export default function QuoteBuilder() {
                 {isGenerated ? 'Update Generated Quote' : 'Generate Official Quote'}
               </button>
               {isGenerated && (
-                <button
-                  onClick={handleDownload}
-                  disabled={isDownloading}
-                  className="btn-primary w-full flex items-center justify-center gap-2"
-                >
-                  {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
-                  Download PDF Quote
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                    className="btn-primary w-full flex items-center justify-center gap-2"
+                  >
+                    {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+                    Download PDF Quote
+                  </button>
+                  <button
+                    onClick={() => setShowSubmitModal(true)}
+                    className="btn-secondary w-full flex items-center justify-center gap-2 border-accent/20 text-accent hover:bg-accent/10"
+                  >
+                    <Send size={18} />
+                    Submit to Sales
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -357,6 +415,108 @@ export default function QuoteBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Submit Modal */}
+      <AnimatePresence>
+        {showSubmitModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSubmitModal(false)}
+              className="absolute inset-0 bg-charcoal/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="glass-card w-full max-w-md p-8 relative z-10"
+            >
+              <button 
+                onClick={() => setShowSubmitModal(false)}
+                className="absolute top-4 right-4 text-white/20 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              {!isSubmitted ? (
+                <>
+                  <h3 className="text-2xl font-bold mb-2">Submit to Sales</h3>
+                  <p className="text-white/50 text-sm mb-6">Enter your details to send this quote to our sales team for formal processing.</p>
+                  
+                  <form onSubmit={handleSubmitQuote} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-white/40 uppercase mb-2">Full Name</label>
+                      <input
+                        required
+                        type="text"
+                        className="w-full bg-charcoal border border-white/10 rounded-lg py-3 px-4 focus:outline-none focus:border-accent transition-colors"
+                        placeholder="John Doe"
+                        value={contactData.name}
+                        onChange={e => setContactData({...contactData, name: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-white/40 uppercase mb-2">Email Address</label>
+                      <input
+                        required
+                        type="email"
+                        className="w-full bg-charcoal border border-white/10 rounded-lg py-3 px-4 focus:outline-none focus:border-accent transition-colors"
+                        placeholder="john@example.com"
+                        value={contactData.email}
+                        onChange={e => setContactData({...contactData, email: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-white/40 uppercase mb-2">Phone Number</label>
+                      <input
+                        required
+                        type="tel"
+                        className="w-full bg-charcoal border border-white/10 rounded-lg py-3 px-4 focus:outline-none focus:border-accent transition-colors"
+                        placeholder="083 123 4567"
+                        value={contactData.phone}
+                        onChange={e => setContactData({...contactData, phone: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-white/40 uppercase mb-2">Company (Optional)</label>
+                      <input
+                        type="text"
+                        className="w-full bg-charcoal border border-white/10 rounded-lg py-3 px-4 focus:outline-none focus:border-accent transition-colors"
+                        placeholder="Your Company Ltd"
+                        value={contactData.company}
+                        onChange={e => setContactData({...contactData, company: e.target.value})}
+                      />
+                    </div>
+
+                    {submitError && (
+                      <div className="text-red-500 text-xs font-bold">{submitError}</div>
+                    )}
+
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="btn-primary w-full py-4 mt-4 disabled:opacity-50"
+                    >
+                      {isSubmitting ? <Loader2 className="animate-spin" /> : <Send size={18} />}
+                      {isSubmitting ? 'Submitting...' : 'Submit Quote'}
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="bg-emerald-500/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle size={32} className="text-emerald-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Quote Submitted!</h3>
+                  <p className="text-white/50">Our team will contact you shortly regarding quote {quoteNumber}.</p>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Print Styles */}
       <style>{`

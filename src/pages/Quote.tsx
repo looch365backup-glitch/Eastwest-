@@ -8,6 +8,8 @@ import html2canvas from 'html2canvas';
 export default function Quote() {
   const location = useLocation();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
@@ -29,10 +31,36 @@ export default function Quote() {
     }
   }, [location]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate API call
-    setTimeout(() => setIsSubmitted(true), 1000);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('https://formspree.io/f/xjgelevq', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        const data = await response.json();
+        if (data.errors) {
+          setSubmitError(data.errors.map((error: any) => error.message).join(', '));
+        } else {
+          setSubmitError('Oops! There was a problem submitting your form');
+        }
+      }
+    } catch (error) {
+      setSubmitError('Oops! There was a problem submitting your form');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDownload = async () => {
@@ -217,9 +245,23 @@ export default function Quote() {
                   />
                 </div>
 
-                <button type="submit" className="btn-primary w-full py-4 text-lg">
-                  <Send size={20} />
-                  Submit Quote Request
+                {submitError && (
+                  <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-lg text-sm mb-6">
+                    {submitError}
+                  </div>
+                )}
+
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="btn-primary w-full py-4 text-lg disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <Loader2 size={20} className="animate-spin" />
+                  ) : (
+                    <Send size={20} />
+                  )}
+                  {isSubmitting ? 'Submitting...' : 'Submit Quote Request'}
                 </button>
               </form>
             </motion.div>
